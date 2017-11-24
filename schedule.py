@@ -27,18 +27,3 @@ def send_message(token,team_id,channel_id, message):
         username='chitterchat',
         icon_emoji=':robot_face:'
     )
-
-def send_test_message():
-    item = get_data('users')
-    res = get_data('authed_teams',{'team_id':item['team_id']})
-    token = res['bot_token']
-    channel_id = item['channel_id']
-    send_message(token,item['team_id'],channel_id,'hi')
-
-
-def get_data(collection,data=None):
-    mdb_connection = pymongo.MongoClient(MONGO_URL)
-    db = mdb_connection['slack-bot']
-    item = db[collection].find_one(data)
-    mdb_connection.close()
-    return item
