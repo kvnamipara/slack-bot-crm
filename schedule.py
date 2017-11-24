@@ -2,7 +2,6 @@
 import pymongo,os
 import datetime
 from slackclient import SlackClient
-from new import get_a_data
 
 MONGO_URL = os.environ.get('MONGO_URL')
 
