@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 from apscheduler.schedulers.blocking import BlockingScheduler
 from schedule import check_for_midnight
 
