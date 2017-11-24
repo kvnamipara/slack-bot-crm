@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-import message
 import pymongo
 import datetime
 from slackclient import SlackClient
 
-authed_teams = {}
 MONGO_URL = os.environ.get('MONGO_URL')
 
 class Bot(object):
@@ -18,7 +16,6 @@ class Bot(object):
                       "scope": "bot"}
         self.verification = os.environ.get("VERIFICATION_TOKEN")
         self.client = SlackClient("")
-        self.messages = {}
 
     def auth(self, code):
         auth_response = self.client.api_call(
@@ -63,42 +60,6 @@ class Bot(object):
         self.remove_from_db('users','team_id',team_id)
         self.remove_from_db('channels','team_id',team_id)
 
-
-
-
-    def open_dm(self, user_id):
-        """
-        Open a DM to send a welcome message when a 'team_join' event is
-        recieved from Slack.
-
-        """
-        new_dm = self.client.api_call("im.open",
-                                      user=user_id,return_im= True)
-        dm_id = new_dm["channel"]["id"]
-        return dm_id
-
-    def onboarding_message(self, team_id, user_id):
-        """
-        Create and send an onboarding welcome message to new users. Save the
-        time stamp of this message on the message object for updating in the
-        future.
-        """
-        if self.find_in_db('messages','team_id',team_id):
-            self.update_in_db('messages','team_id',team_id, 'message',{user_id: message.Message()})
-        else:
-            self.insert_to_db(messages,{'team_id':team_id,'user_id':message.Message()})
-        message_obj = self.messages[team_id][user_id]
-        message_obj.channel = self.open_dm(user_id)
-        message_obj.create_attachments()
-        post_message = self.client.api_call("chat.postMessage",
-                                            channel=message_obj.channel,
-                                            username=self.name,
-                                            icon_emoji=self.emoji,
-                                            text=message_obj.text,
-                                            attachments=message_obj.attachments
-                                            )
-        timestamp = post_message["ts"]
-        message_obj.timestamp = timestamp
 
 
 
